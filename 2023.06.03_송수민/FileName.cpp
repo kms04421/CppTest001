@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <Windows.h>
-int battle();
+
+int battle(int boostype);
 int percentage();
 int item();
 int work();
@@ -12,16 +13,17 @@ int bag();
 
 int dmg = 15;   // 사용자 데미지
 int hp = 100;   // 사용자 HP
-int heal = 0;
+int heal = 0;	
 int addDmg = 0;
 
 int sword = 0;
 int longSword = 0;
 int gun = 0;
-int working = -10;
+int working = 1;
 
 int main()
 {
+	int last = 0;
 	srand(time(NULL));
 	while (working < 7)
 	{
@@ -37,6 +39,7 @@ int main()
 			printf("죽었다!! 더는 싸울수없다.\n");
 			break;
 		}
+	
 		
 
 		int i = 0;
@@ -62,14 +65,22 @@ int main()
 				break;
 				
 			}
+			
 			if (hp < 0) {
 				break;
 			}
+			if (working == 6) {
+				printf("==============갑자기 위험한 적을 만났다========\n");
 
+				last == battle(3);
+				printf("==============여행은 끝났다===================\n");
+				break;
+			}
 			if (i == 1 || i ==2 ||i==3) {
 				
 			}
 			else {
+				printf("방심해서 죽어버렸다..........");
 				break;
 			}
 		
@@ -133,7 +144,7 @@ int work() {
 	++working;
 	int runing1 = rand() % 10 + 1;
 	int runing2 = rand() % 10 + 1;
-	if (runing1 > 5) {//산으로 간다
+	if (runing1 <= 5) {//산으로 간다
 		printf("===============================================\n");
 		printf("나는 산으로 갔다. \nHP: %d 공격력 :%d\n", hp, dmg+ addDmg);
 		printf("===============================================\n");
@@ -143,7 +154,7 @@ int work() {
 			printf("                적을 만났다!\n");
 			printf("\n\n");
 
-			battle();//전투
+			battle(0);//전투
 
 
 		}//몬스터 만남
@@ -160,12 +171,12 @@ int work() {
 
 		}
 	}
-	else if (runing1 > 7) {//길로 간다
+	else if (runing1 >= 6) {//길로 간다
 		printf("===============================================\n");
 		printf("나는 길로 갔다. \nHP: %d 공격력 :%d\n", hp, dmg + addDmg);
 		printf("===============================================\n");
 	}
-	else if (runing1 >= 10) {//강으로 간다 
+	else if (runing1 >= 8) {//강으로 간다 
 		int river = rand() % 10 + 1;
 		printf("===============================================\n");
 		printf("나는 강으로 갔다. \nHP: %d 공격력 :%d\n", hp, dmg + addDmg);
@@ -182,14 +193,14 @@ int work() {
 	}
 	return 0;
 }
-int battle() 
+int battle(int boostype) 
 {
-	
-	int boos = 150; // 보스 HP
+	int good = 0;
+	int boos = 150+(boostype*5); // 보스 HP
 	int ans = 0;
 	printf("===============================================\n");
 	printf("나의 현상태 \nHP: %d 공격력 :%d\n", hp, dmg + addDmg);
-	printf("적의 hp : %d\n", boos);
+	printf("%s의 hp : %d\n",(boostype == 0)? "고블린": "야스오",boos);
 	printf("행동선택  1.공격  2.도망\n");
 	printf("===============================================\n");
 	scanf_s("%d", &ans);
@@ -201,6 +212,7 @@ int battle()
 		printf("===============================================\n");
 		int die = 0;
 		int sum = 0;
+		
 		srand(time(NULL));// rand함수의 키값을 바꿔즈는 함수 
 		// rand() 함수를 사용해서 랜덤 값을 받는다
 		if (hp < 1) {
@@ -217,8 +229,15 @@ int battle()
 		if (boos < 1) {
 			printf("승리하었다!!.\n");
 			break;
+			if (boostype  != 0 ) {
+				printf("여행은 성공적으로 마무리 하였다!!.\n");
+				good = 1;
+				break;
+			}
 		}
-			
+		
+
+
 
 		if (ans == 1) {
 			printf("공격!!!!!!!!\n");
@@ -258,7 +277,7 @@ int battle()
 			continue;
 		}
 		else if (ans == 2) {
-			int randomNumber3 = rand() % 30 + 1;
+			int randomNumber3 = rand() % 10 + 1;
 			if (randomNumber3 > 7) {
 				printf("도망에 성공했다!\n");
 				break;
@@ -276,7 +295,7 @@ int battle()
 		printf("자격이 없다 종료");
 		break;		
 	}
-	return 0;
+	return good;
 }// 전투 함수 
 int item() {
 	
@@ -284,10 +303,11 @@ int item() {
 	{
 		int itemP =percentage();
 		printf("%d\n", itemP);
-		int num1 = (sword > 0) ? 0 : 7;
-		int num2 = (longSword > 0) ? 0 : (sword > 0) ? 0 : 5;
-		int num3 = (gun > 0) ? 0 : (longSword > 0) ? 0 : 8;
-		if (itemP < num1) {
+		int num1 = (sword > 0) ? 11 : 2;
+		int num2 = (longSword > 0) ? 11: (sword > 0) ? 2:4;
+		int num3 = (gun > 0) ? 11 : (longSword > 0) ? 4: 8;
+		printf("%d\n", num1);
+		if (itemP > num1) {
 
 			printf("===============================================\n");
 			printf("낡은 검을 얻었다.!!!\n");
@@ -308,7 +328,7 @@ int item() {
 
 			break;
 		}
-		else if (itemP < num2) {
+		else if (itemP > num2) {
 
 			printf("===============================================\n");
 			printf("날카로운 검을 얻었다.!!!\n");
@@ -330,7 +350,7 @@ int item() {
 			printf("===============================================\n");
 			longSword = 1;
 			break;
-		}else if (itemP < num3) {
+		}else if (itemP > num3) {
 
 			printf("===============================================\n");
 			printf("총을 얻었다.!!!\n");
